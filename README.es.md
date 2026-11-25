@@ -60,16 +60,16 @@ Al tratarse de un proyecto independiente distribuido sin firma comercial de cód
 Las siguientes imágenes son capturas de ejemplo de cómo se ve DeckMix una vez cargada una biblioteca local de música (la aplicación no incluye archivos de audio).
 
 ### Inicio y Deck Mixes
-![Vista de Inicio con biblioteca, accesos rápidos y Deck Mixes](docs/screenshots/home.jpg)
+![Vista de Inicio con biblioteca, accesos rápidos y Deck Mixes](screenshots/español/home.jpg)
 
 ### Biblioteca local
-![Vista de Biblioteca local con lista de canciones, controles de análisis DSP y Modo Mix](docs/screenshots/library.jpg)
+![Vista de Biblioteca local con lista de canciones, controles de análisis DSP y Modo Mix](screenshots/español/library.jpg)
 
 ### Vista ampliada (escenario de portada)
-![Vista ampliada con portada centrada, Radio de canción y temas relacionados](docs/screenshots/stage-view.jpg)
+![Vista ampliada con portada centrada, Radio de canción y temas relacionados](screenshots/español/stage-view.jpg)
 
 ### Letras sincronizadas
-![Vista de letras sincronizadas con ajuste de offset y selector de versiones](docs/screenshots/lyrics.jpg)
+![Vista de letras sincronizadas con ajuste de offset y selector de versiones](screenshots/español/lyrics.png)
 
 ## Historial de cambios
 

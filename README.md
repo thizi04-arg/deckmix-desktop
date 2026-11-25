@@ -60,16 +60,16 @@ Because DeckMix Player Desktop is an independent project distributed without a c
 The images below are sample screenshots showing DeckMix after loading a local music library (no audio files are distributed with the application).
 
 ### Home and Deck Mixes
-![Home view with library, quick shortcuts, and Deck Mixes](docs/screenshots/home.jpg)
+![Home view with library, quick shortcuts, and Deck Mixes](screenshots/english/home.jpg)
 
 ### Local Library
-![Local Library view with track list, DSP analysis controls, and Mix Mode](docs/screenshots/library.jpg)
+![Local Library view with track list, DSP analysis controls, and Mix Mode](screenshots/english/library.jpg)
 
 ### Expanded Stage View
-![Expanded view with centered cover, Song Radio, and related tracks](docs/screenshots/stage-view.jpg)
+![Expanded view with centered cover, Song Radio, and related tracks](screenshots/english/stage-view.jpg)
 
 ### Synced Lyrics
-![Synced lyrics view with offset adjustment and version selector](docs/screenshots/lyrics.jpg)
+![Synced lyrics view with offset adjustment and version selector](screenshots/english/lyrics.jpg)
 
 ## Changelog
 
