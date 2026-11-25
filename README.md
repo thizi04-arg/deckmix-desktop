@@ -75,10 +75,9 @@ The images below are sample screenshots showing DeckMix after loading a local mu
 
 See [CHANGELOG.md](./CHANGELOG.md) for the full version history and v1.0.0 release notes.
 
-## License and Previous Open-Source Web Edition
+## License
 
 - **License:** DeckMix Player Desktop is free closed-source software for personal, non-commercial use (**All Rights Reserved**, Copyright (c) 2026 Thizi04). See [LICENSE.md](./LICENSE.md) for full terms.
-- **Previous open-source web edition:** The earlier browser-based open-source version of DeckMix Player remains available at [github.com/thizi04-arg/deckmix-player](https://github.com/thizi04-arg/deckmix-player).
 
 ## Looking for an Android Music Player?
 
