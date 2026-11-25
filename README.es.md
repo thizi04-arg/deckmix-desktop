@@ -75,10 +75,9 @@ Las siguientes imágenes son capturas de ejemplo de cómo se ve DeckMix una vez 
 
 Consultá [CHANGELOG.es.md](./CHANGELOG.es.md) para ver el historial completo de versiones y las novedades de la v1.0.0.
 
-## Licencia y versión web open-source anterior
+## Licencia
 
 - **Licencia:** DeckMix Player Desktop es software gratuito de código cerrado únicamente para uso personal y no comercial (**Todos los derechos reservados**, Copyright (c) 2026 Thizi04). Consultá [LICENSE.es.md](./LICENSE.es.md) para ver los términos completos.
-- **Versión web open-source anterior:** La edición web de código abierto anterior de DeckMix Player sigue disponible en [github.com/thizi04-arg/deckmix-player](https://github.com/thizi04-arg/deckmix-player).
 
 ## ¿Buscás un reproductor para Android?
 
