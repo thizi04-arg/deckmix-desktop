@@ -33,6 +33,7 @@ Chronological record of versions and improvements implemented in DeckMix Player,
 
 ### Internationalization and Settings Search
 - **Full 1:1 ES/EN i18n parity and updated Settings search (`src/i18n/locales/en/`, `src/i18n/locales/es/`, `SettingsView.tsx`):** added all Spanish and English translations for Master EQ bands/Q, Stereo Balance, Developer Mode, Onboarding, and lossless `.m4a` notices, plus bilingual search keywords (`balance`, `pan`, `factor q`, `5/10/15`, `developer`, `onboarding`, `welcome`, `m4a`, `alac`, etc.) in `Settings`.
+- **Portable executable security verification (`DeckMix-Player-Portable-1.2.1-x64.exe`):** public [VirusTotal scan report (`0/62` detections)](https://www.virustotal.com/gui/file/01aa54de6b620d2fc391ff787f93e81fe0cbab965b26c25d3f0110f41783b3e1) (`SHA-256`: `01AA54DE6B620D2FC391FF787F93E81FE0CBAB965B26C25D3F0110F41783B3E1`).
 
 ---
 

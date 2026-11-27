@@ -33,6 +33,7 @@ Registro cronológico de versiones y mejoras implementadas en DeckMix Player, or
 
 ### Internacionalización y Buscador de Configuración
 - **Paridad total ES/EN y palabras clave actualizadas (`src/i18n/locales/en/`, `src/i18n/locales/es/`, `SettingsView.tsx`):** traducciones 1:1 en español e inglés para bandas/factor Q del EQ, Balance L/R, Modo desarrollador, Asistente de bienvenida y avisos de `.m4a` lossless, junto con palabras clave nuevas (`balance`, `pan`, `factor q`, `5/10/15`, `desarrollador`, `onboarding`, `bienvenida`, `m4a`, `alac`, etc.) en el buscador de `Configuración`.
+- **Verificación de seguridad del ejecutable portable (`DeckMix-Player-Portable-1.2.1-x64.exe`):** análisis público en [VirusTotal (`0/62` detecciones)](https://www.virustotal.com/gui/file/01aa54de6b620d2fc391ff787f93e81fe0cbab965b26c25d3f0110f41783b3e1) (`SHA-256`: `01AA54DE6B620D2FC391FF787F93E81FE0CBAB965B26C25D3F0110F41783B3E1`).
 
 ---
 
