@@ -10,7 +10,7 @@
 
 ## Download and Quick Start
 
-1. Go to the **Releases** section of this repository and download **`DeckMix-Player-Portable-1.0.0-x64.exe`**.
+1. Go to the **Releases** section of this repository and download **`DeckMix-Player-Portable-1.2.1-x64.exe`**.
 2. Place the `.exe` wherever you prefer (your Desktop, a dedicated folder, or a USB drive) and double-click to launch it — no installation, Node.js, or Chrome required.
 3. Link one or more local music folders from the app to start listening right away.
 
@@ -25,14 +25,14 @@ Because DeckMix Player Desktop is an independent project distributed without a c
 ### Requirements
 
 - **Operating system:** Windows 10 or Windows 11 (64-bit / x64).
-- **FFmpeg (optional):** Not required for playback, DSP analysis, or WAV mix export. Installing FFmpeg (or pointing to its executable in **Settings**) is only needed if you want to export mixes to **MP3** or **FLAC**, edit metadata tags directly inside audio files on disk, or enable FFmpeg-assisted DSP decoding.
+- **FFmpeg (optional):** Not required for standard playback, DSP analysis, or WAV mix export. Installing FFmpeg (or pointing to its executable in **Settings**) is only needed if you want automatic lossless playback for **`.m4a` files with embedded FLAC or ALAC** (via a local cache inside `DeckMix-Data`), to export mixes to **MP3** or **FLAC**, edit metadata tags directly inside audio files on disk, or enable FFmpeg-assisted DSP decoding.
 
 ## Key Features
 
 ### Instant Local Streaming and Audio Engine
 - **Instant local streaming playback:** Plays `FLAC`, `MP3`, `WAV`, `OGG`, `M4A`, `MP4`, `AAC`, `OPUS`, and `WEBM` directly from disk with near-instant startup and low memory usage, keeping even Hi-Res FLAC libraries responsive on 4 GB RAM machines.
 - **Crossfade, Gapless, and Micro-Fades:** Configurable crossfade (`0` to `12 s`, with `0 s` for seamless gapless playback) plus smooth zero-click micro-fades when pausing, resuming, skipping tracks, or seeking.
-- **Master Audio Controls:** 6-band graphic equalizer with presets and automatic bypass, Mono audio mode, Auto-Gain targeting `-11 / -14 / -18 LUFS` with a Master safety limiter, and a Sleep Timer with gentle fade-out.
+- **Master Audio Controls:** Configurable **5, 10, or 15-band** Master graphic equalizer with presets, adjustable **Q factor** (`0.5` to `4.0`), and true bypass; **Left / Right (L/R) stereo balance** control with true bypass alongside Mono audio mode; Auto-Gain targeting `-11 / -14 / -18 LUFS` with a Master safety limiter; and a Sleep Timer with gentle fade-out.
 
 ### Native Windows Integration and Frameless Mini Player
 - **Native desktop shell:** Custom dark title bar with integrated window controls, multi-monitor window size and position memory, and `F11` fullscreen support.
@@ -40,9 +40,9 @@ Because DeckMix Player Desktop is an independent project distributed without a c
 - **Frameless Mini Player:** Always-on-top floating window with instant reopening and 3 adaptive modes depending on window size — compact bar, large cover with dynamic accent tint and hover controls, and an interactive play queue with integrated settings and volume control.
 
 ### DJ Mix Mode and Hardware Support
-- **Dual-deck Mix Mode:** Toggleable per playlist, album, Liked Songs, or library, featuring zoomable dual RGB frequency waveforms, beat/bar grids, and direct curve editing for Volume, 3-band EQ, LPF/HPF Filters, and parallel FX (BPM-synced **Echo Out** and **Reverb Wash**).
-- **Pro mixing tools:** Live beatmatching, **Key Lock / Master Tempo**, harmonic **Key Shift** (`-4` to `+4` semitones), **Mid/Side** vocal and instrumental isolation, persistent **Hot Cues (`C1`–`C4`)**, and smart automatic transition presets (`Wave`, `Melt`, `Slam`).
-- **Audio outputs and MIDI DJ controllers:** Primary output device selector (speakers, headphones, HDMI, USB interfaces) with optional secondary **CUE pre-listening** output in Mix Mode, plus **MIDI DJ controller** support with **MIDI Learn**.
+- **Dual-deck Mix Mode:** Toggleable per playlist, album, Liked Songs, or library, featuring an unobstructed RGB waveform canvas with a dedicated bottom control bar, horizontal zoomed panning with a minimap scrollbar and **Hand mode (`H`)**, beat/bar grids, and direct curve editing for Volume, 3-band EQ, LPF/HPF Filters, and parallel FX (BPM-synced **Echo Out** and **Reverb Wash**).
+- **Pro mixing tools and shortcuts:** **"Move mix"** mode (`W`, `[` / `]`) that shifts both tracks together while keeping curves anchored to the music, live beatmatching, **Key Lock / Master Tempo**, harmonic **Key Shift** (`-4` to `+4` semitones), **Mid/Side** vocal and instrumental isolation, persistent **Hot Cues (`C1`–`C4`)**, smart automatic transition presets (`Wave`, `Melt`, `Slam`), and dedicated editor shortcuts (`1`–`6`, `Space` with configurable double-tap restart, and `?`).
+- **CUE pre-listening, audio outputs, and MIDI DJ controllers:** Primary output device selector (speakers, headphones, HDMI, USB interfaces) with optional secondary **CUE pre-listening** output, a live 60 fps CUE playhead, and smart CUE volume (matching main playback on shared output, or a stacked dual volume control when using a dedicated CUE device), plus **MIDI DJ controller** support with **MIDI Learn**.
 
 ### Smart Local Library, Synced Lyrics, and Utilities
 - **Automatic music analysis (DSP):** Background detection of BPM, musical key and Camelot wheel code, LUFS loudness, song phrases (`Intro`, `Drop`, `Outro`), and RGB waveforms, with smart deferral so rapid track skipping stays instant.
@@ -50,7 +50,9 @@ Because DeckMix Player Desktop is an independent project distributed without a c
 - **Synced lyrics and expanded stage:** Priority loading of local `.lrc` files and online LRCLIB search with strict duration matching, fine timing offset controls, version picker, smooth compact lyrics preview card, and unified Theater / Fullscreen stage view with a live frequency spectrum visualizer.
 - **100% local discovery and utilities:** Automatic **Deck Mixes**, play-based auto-updating playlists, Song Radio and smart Autoplay, harmonic Smart Reorder, local **Wrapped** listening stats in an editable Profile, visual Zoom level (`70 %`–`130 %`), smart **Duplicate Detector** with optional send-to-Recycle-Bin cleanup, and full portable JSON backup and restore.
 
-### Desktop Extras
+### Desktop Extras, Onboarding, and Diagnostics
+- **Welcome / Onboarding wizard:** Quick 4-step first-run guide to choose your language, link your first music folder, set key preferences, and learn Mix Mode shortcuts (reopenable anytime from **Settings -> About DeckMix**).
+- **Optional Developer Mode:** Off by default in **Settings**; when enabled, displays non-blocking technical diagnostic notices on real errors with expandable details and one-click copy to clipboard.
 - **Discord Rich Presence:** Native `Listening` activity integration (silent when Discord is closed).
 - **Wi-Fi Remote Control:** Optional PIN-protected local-network remote with a dark mobile web interface for phones or TVs.
 - **Mix export and disk tag editor:** Offline export of single transitions or full mixed playlists to **WAV** (built-in) or **MP3 / FLAC** (with optional FFmpeg), plus direct on-disk metadata editing for title, artist, album, cover art, BPM, and key.
@@ -73,7 +75,7 @@ The images below are sample screenshots showing DeckMix after loading a local mu
 
 ## Changelog
 
-See [CHANGELOG.md](./CHANGELOG.md) for the full version history and v1.0.0 release notes.
+See [CHANGELOG.md](./CHANGELOG.md) for the full version history and v1.2.1 release notes.
 
 ## License
 

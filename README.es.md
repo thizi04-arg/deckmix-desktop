@@ -10,7 +10,7 @@
 
 ## Descarga e inicio rápido
 
-1. Entrá a la sección **Releases** de este repositorio y descargá **`DeckMix-Player-Portable-1.0.0-x64.exe`**.
+1. Entrá a la sección **Releases** de este repositorio y descargá **`DeckMix-Player-Portable-1.2.1-x64.exe`**.
 2. Guardá el `.exe` donde prefieras (tu Escritorio, una carpeta dedicada o un pendrive) y abrilo con doble clic — sin instalación, sin Node.js ni Chrome.
 3. Vinculá una o más carpetas de música desde la app para empezar a escuchar al instante.
 
@@ -25,14 +25,14 @@ Al tratarse de un proyecto independiente distribuido sin firma comercial de cód
 ### Requisitos
 
 - **Sistema operativo:** Windows 10 o Windows 11 (64 bits / x64).
-- **FFmpeg (opcional):** No es necesario para reproducir música, analizar tu biblioteca ni exportar mezclas en WAV. Instalar FFmpeg (o indicar su ruta en **Configuración**) solo es necesario si querés exportar mezclas a **MP3** o **FLAC**, editar metadatos directamente en los archivos de disco o usar análisis DSP asistido por FFmpeg.
+- **FFmpeg (opcional):** No es necesario para reproducir música estándar, analizar tu biblioteca ni exportar mezclas en WAV. Instalar FFmpeg (o indicar su ruta en **Configuración**) solo es necesario si querés reproducir automáticamente sin pérdida archivos **`.m4a` con FLAC o ALAC embebido** (mediante caché local dentro de `DeckMix-Data`), exportar mezclas a **MP3** o **FLAC**, editar metadatos directamente en los archivos de disco o usar análisis DSP asistido por FFmpeg.
 
 ## Funcionalidades principales
 
 ### Reproducción local instantánea y motor de audio
 - **Streaming local directo:** Reproduce `FLAC`, `MP3`, `WAV`, `OGG`, `M4A`, `MP4`, `AAC`, `OPUS` y `WEBM` directo desde disco con inicio casi instantáneo y muy bajo consumo de memoria, manteniendo ágiles incluso bibliotecas FLAC pesadas en equipos de 4 GB de RAM.
 - **Crossfade, Gapless y Micro-fades:** Crossfade configurable (`0` a `12 s`, con `0 s` para reproducción sin pausas) más micro-fades suaves sin clics al pausar, reanudar, cambiar de tema o mover la barra de tiempo.
-- **Controles Master de audio:** Ecualizador gráfico de 6 bandas con presets y bypass automático, modo Mono, Auto-Gain hacia objetivo `-11 / -14 / -18 LUFS` con limitador Master de seguridad y temporizador de apagado (Sleep Timer) con fade-out suave.
+- **Controles Master de audio:** Ecualizador gráfico Master configurable de **5, 10 o 15 bandas** con presets, **factor Q** ajustable (`0.5` a `4.0`) y bypass real, control de **balance estéreo Izquierda / Derecha (L/R)** con bypass real junto al modo Mono, Auto-Gain hacia objetivo `-11 / -14 / -18 LUFS` con limitador Master de seguridad y temporizador de apagado (Sleep Timer) con fade-out suave.
 
 ### Integración nativa con Windows y Mini reproductor sin marco
 - **Interfaz desktop nativa:** Barra de título oscura personalizada con controles de ventana integrados, memoria de tamaño y posición entre monitores y soporte de pantalla completa con `F11`.
@@ -40,9 +40,9 @@ Al tratarse de un proyecto independiente distribuido sin firma comercial de cód
 - **Mini reproductor sin marco:** Ventana flotante siempre visible con reapertura instantánea y 3 modos adaptativos según su tamaño — barra compacta, portada grande con color dinámico y controles al pasar el mouse, y fila de reproducción interactiva con ajustes integrados y control de volumen.
 
 ### Modo Mix DJ y soporte de hardware
-- **Modo Mix de doble deck:** Activable de forma independiente por playlist, álbum, Tus me gusta o biblioteca, con doble forma de onda RGB con zoom, grilla de beats/compases y edición directa de curvas para Volumen, EQ de 3 bandas, Filtros LPF/HPF y efectos paralelos (**Echo Out** sincronizado al BPM y **Reverb Wash**).
-- **Herramientas avanzadas de mezcla:** Beatmatching en vivo, **Key Lock / Master Tempo**, **Key Shift** armónico (`-4` a `+4` semitonos), aislamiento vocal e instrumental **Mid/Side**, **Hot Cues (`C1`–`C4`)** persistentes y presets automáticos de transición (`Onda`, `Melt`, `Slam`).
-- **Salidas de audio y controladoras MIDI DJ:** Selector de dispositivo de salida principal (parlantes, auriculares, HDMI, interfaces USB) con salida secundaria opcional para **preescucha CUE** en Modo Mix, además de soporte para **controladoras MIDI DJ** con **MIDI Learn**.
+- **Modo Mix de doble deck:** Activable de forma independiente por playlist, álbum, Tus me gusta o biblioteca, con canvas de ondas RGB despejado, barra de controles inferior dedicada, desplazamiento horizontal con zoom, minimapa y **modo Mano (`H`)**, grilla de beats/compases y edición directa de curvas para Volumen, EQ de 3 bandas, Filtros LPF/HPF y efectos paralelos (**Echo Out** sincronizado al BPM y **Reverb Wash**).
+- **Herramientas avanzadas de mezcla y atajos:** Modo **"Mover cruce"** (`W`, `[` / `]`) que desplaza ambos temas manteniendo las curvas ancladas a la música, beatmatching en vivo, **Key Lock / Master Tempo**, **Key Shift** armónico (`-4` a `+4` semitonos), aislamiento vocal e instrumental **Mid/Side**, **Hot Cues (`C1`–`C4`)** persistentes, presets automáticos de transición (`Onda`, `Melt`, `Slam`) y atajos dedicados del editor (`1`–`6`, `Espacio` con reinicio por doble tap configurable y `?`).
+- **Preescucha CUE, salidas de audio y controladoras MIDI DJ:** Selector de dispositivo de salida principal (parlantes, auriculares, HDMI, interfaces USB) con salida secundaria opcional para **preescucha CUE**, cabezal CUE en vivo a 60 fps y volumen inteligente (heredado de la música principal en salida compartida o doble control apilado cuando usa salida dedicada), además de soporte para **controladoras MIDI DJ** con **MIDI Learn**.
 
 ### Biblioteca inteligente, letras sincronizadas y utilidades
 - **Análisis musical automático (DSP):** Detección en segundo plano de BPM, tonalidad musical y código Camelot, sonoridad LUFS, frases (`Intro`, `Drop`, `Outro`) y ondas RGB, con inicio diferido para que saltar rápido de canción siga siendo instantáneo.
@@ -50,7 +50,9 @@ Al tratarse de un proyecto independiente distribuido sin firma comercial de cód
 - **Letras sincronizadas y vista ampliada:** Lectura prioritaria de archivos `.lrc` locales y búsqueda online en LRCLIB con validación estricta de duración, ajuste fino de sincronización, selector de versiones, tarjeta compacta con desplazamiento fluido y vista ampliada / Pantalla completa unificada con visualizador de espectro en vivo.
 - **Inteligencia 100 % local y utilidades:** **Deck Mixes** automáticos, playlists automáticas por reproducciones, Radio de canción y Autoplay inteligente, orden armónico Smart Reorder, estadísticas **Wrapped** locales en un Perfil editable, Nivel de zoom visual (`70 %`–`130 %`), **Detector de duplicados** inteligente con envío opcional a la Papelera y respaldo/restauración portable en JSON.
 
-### Extras de escritorio
+### Extras de escritorio, bienvenida y diagnóstico
+- **Asistente de bienvenida (Onboarding):** Guía rápida de 4 pasos en el primer inicio para elegir idioma, vincular tu primera carpeta de música, ajustar preferencias clave y conocer los atajos del Modo Mix (reabrible en cualquier momento desde **Configuración -> Acerca de DeckMix**).
+- **Modo desarrollador opcional:** Desactivado por defecto en **Configuración**; al activarlo muestra avisos técnicos no bloqueantes ante errores reales con detalle desplegable y copiado rápido al portapapeles.
 - **Discord Rich Presence:** Integración nativa con estado `Listening` (silenciosa cuando Discord está cerrado).
 - **Control remoto por Wi-Fi:** Servidor local opcional protegido con PIN e interfaz web móvil oscura para controlar la reproducción desde tu celular o TV en la misma red.
 - **Exportación de mezclas y editor de tags en disco:** Exportación offline de transiciones individuales o playlists mixeadas completas a **WAV** (integrado) o **MP3 / FLAC** (con FFmpeg opcional), además de edición nativa de metadatos directamente en el archivo (título, artista, álbum, portada, BPM y tonalidad).
@@ -73,7 +75,7 @@ Las siguientes imágenes son capturas de ejemplo de cómo se ve DeckMix una vez 
 
 ## Historial de cambios
 
-Consultá [CHANGELOG.es.md](./CHANGELOG.es.md) para ver el historial completo de versiones y las novedades de la v1.0.0.
+Consultá [CHANGELOG.es.md](./CHANGELOG.es.md) para ver el historial completo de versiones y las novedades de la v1.2.1.
 
 ## Licencia
 

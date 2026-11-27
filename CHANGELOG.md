@@ -4,6 +4,76 @@
 
 Chronological record of versions and improvements implemented in DeckMix Player, ordered from newest to oldest.
 
+## [v1.2.1] - Configurable Master EQ, Stereo Balance, Onboarding, Developer Mode, and Lossless `.m4a`
+
+*(Includes all Mix Mode improvements and bug fixes from internal build `v1.1.1`.)*
+
+### Audio Engine and Master Bus Controls
+- **Configurable 5 / 10 / 15-band Master Graphic EQ + Q factor (`masterEq.ts`, `AudioEngine.ts`, `SettingsView.tsx`, `usePlayer.tsx`, `backup.ts`):**
+  - Added selectable Master EQ resolutions of **5 bands** (`60 Hz`–`14 kHz`), **10 bands** (`32 Hz`–`16 kHz`, ISO octaves), and **15 bands** (`25 Hz`–`16 kHz`, ISO 2/3-octaves), plus an adjustable **Q factor** slider (`0.5`–`4.0`, default `1.0`) applied to peaking bands while preserving stable low-shelf and high-shelf extremes.
+  - Added smooth log-frequency curve resampling (`resampleMasterEqBands`) when switching live between 5 / 10 / 15 bands and automatic migration of legacy 6-band profiles from `UserPreferences` or JSON backups without breaking saved configurations.
+  - Preserved true audio-graph bypass: `BiquadFilterNode` stages are dynamically rebuilt on band-count changes and fully disconnected from the Master chain whenever the EQ is off or flat (`0 dB`).
+- **Left / Right Stereo Balance with true bypass (`AudioEngine.ts`, `SettingsView.tsx`, `db.ts`, `backup.ts`, `usePlayer.tsx`):**
+  - Added an **L / R stereo balance** control (`-100%` Left to `+100%` Right, with quick Center button and slider double-click reset) in `Settings -> Audio and playback` alongside Mono mode.
+  - Implemented via an on-demand `StereoPannerNode` between `masterGain` and `limiter`, bypassed completely at `0%`, and persisted in `UserPreferences` and JSON backups.
+
+### Onboarding, Public Developer Mode, and Diagnostics
+- **First-run Welcome / Onboarding wizard (`OnboardingModal.tsx`, `App.tsx`, `SettingsView.tsx`, `usePlayer.tsx`, `db.ts`):**
+  - Added a 4-step dark DeckMix onboarding modal shown only on first launch (`onboardingCompleted` persisted in `UserPreferences`, with a persistent **Skip** button): (1) Language (`Español` / `English`), (2) First music folder linking (native picker in Electron or browser picker on `localhost`), (3) Quick preferences (Auto-Gain LUFS, Autoplay, and Electron desktop toggles), and (4) Mix Mode and essential keyboard shortcuts overview.
+  - Automatically marks `onboardingCompleted` for existing profiles upgrading from earlier versions that already have linked folders or library tracks, while exposing a **"View welcome guide again"** button in `Settings -> About DeckMix`.
+- **Public Developer Mode with detailed error toasts (`devErrorBus.ts`, `DevErrorToasts.tsx`, `SettingsView.tsx`, `App.tsx`, `usePlayer.tsx`, `AudioEngine.ts`, `lrclibClient.ts`, `midiController.ts`):**
+  - Added a **"Developer mode"** toggle in `Settings` (disabled by default for regular users) persisted in `UserPreferences` and JSON backups.
+  - When enabled, displays non-blocking bottom-right diagnostic toasts (capped at 4 visible cards with 6-second deduplication and `xN` counter) for real captured failures across audio decoding/streaming, Electron IPC, FFmpeg, LRCLIB, Discord RPC, Web MIDI, folder watcher, Wi-Fi remote, and unhandled runtime errors, complete with collapsible technical details and one-click copy to clipboard.
+
+### Lossless `.m4a` (FLAC / ALAC) Playback in Electron
+- **Automatic lossless `.m4a` FLAC / ALAC support via FFmpeg (`electron/main/libraryBridge.ts`, `electron/main/mediaTools.ts`, `electron/main/index.ts`, `electron/preload/index.ts`, `vite-env.d.ts`, `AudioEngine.ts`):**
+  - When an `.m4a` track fails in `<audio>` or `decodeAudioData`, Electron detects the embedded codec via `music-metadata` (with an `ffmpeg -i` fallback probe) and losslessly remuxes FLAC (`-c:a copy`) or converts ALAC (`-c:a flac`) using atomic writes into a bounded `512 MB` LRU cache under `userData/cache/m4a-flac/`.
+  - Served transparently via `deckmix://local/m4a-cache?key=...` with the same CORS (`Access-Control-Allow-Origin: *`, `Access-Control-Expose-Headers`) and HTTP `Range` (`206 Partial Content`) headers as `deckmix://local/file`, supporting instant `loadStream()` playback as well as Mix Mode `decodeTrackAudio`.
+  - Includes single-flight per-file deduplication, automatic FFmpeg child-process cleanup on `before-quit`, and clean localized fallback messages on web `localhost` or when FFmpeg is not installed.
+
+### Internationalization and Settings Search
+- **Full 1:1 ES/EN i18n parity and updated Settings search (`src/i18n/locales/en/`, `src/i18n/locales/es/`, `SettingsView.tsx`):** added all Spanish and English translations for Master EQ bands/Q, Stereo Balance, Developer Mode, Onboarding, and lossless `.m4a` notices, plus bilingual search keywords (`balance`, `pan`, `factor q`, `5/10/15`, `developer`, `onboarding`, `welcome`, `m4a`, `alac`, etc.) in `Settings`.
+
+---
+
+## [v1.1.1] - Mix Mode Update
+
+*(Internal development build; included in `v1.2.1`.)*
+
+### New Mix Mode Features
+- **Unobstructed waveform canvas and dedicated bottom control bar (`WaveformCanvas.tsx`):** relocated the preview Play/Pause and Restart buttons (along with `RGB`, `bars` selector, Move mix, Pan mode, and Zoom controls) out of the center of the waveforms into a dedicated toolbar directly beneath the canvas.
+- **Zoomed waveform panning and interactive minimap scrollbar (`WaveformCanvas.tsx`):** added horizontal viewport navigation at zoom `> 1.0x` without accidentally shifting Track A or Track B, via a draggable horizontal scrollbar beneath the waveforms (highlighting the transition overlap region), a `Hand` pan-mode toggle (`H`), middle-mouse drag or `Alt + drag`, `Shift + wheel` / horizontal trackpad scroll, cursor-anchored `Ctrl/Alt + wheel` zoom, and one-click zoom reset to `1.0x`.
+- **Move transition window with curves anchored to the music (`mixMath.ts`, `WaveformCanvas.tsx`, `MixTransitionPanel.tsx`):** new **"Move mix"** mode (`W`, plus `[` / `]` per bar and `Shift + [` / `]` per beat) that shifts Track A and Track B together in beat sync while automatically counter-shifting Volume, 3-band EQ, Filter, and FX curves (`shiftTransitionCurvesForWindowMove`) so every node stays locked to the exact same beat, vocal, or drop without re-editing.
+- **Live CUE playback line (`WaveformCanvas.tsx`, `MixTransitionPanel.tsx`):** draws a 60 fps cyan `CUE` playhead directly inside Track A's or Track B's lane while pre-listening on CUE, plus an off-screen directional edge badge (`<< CUE` / `CUE >>`) when zoomed outside the CUE position.
+- **Mix Mode keyboard shortcuts and in-editor shortcuts panel (`MixTransitionPanel.tsx`, `useKeyboardShortcuts.ts`, `SettingsView.tsx`, `usePlayer.tsx`):** shortcuts active automatically while **Edit transition** is open:
+  - `1`–`6`: select and focus editable curves over the waveforms (`Volume`, `EQ Lows`, `EQ Mids`, `EQ Highs`, `Filter`, `Effects`).
+  - `Space` (single tap): play or pause transition preview.
+  - **Quick double-tap `Space`** (`<= 340 ms`): restart transition preview from pre-roll, configurable to **`R`**, **`Backspace`**, or **`0`** in both `Settings -> Keyboard shortcuts` and the Mix shortcuts dialog.
+  - `W` (Move mix mode), `[` / `]` (shift 1 bar), `Shift + [` / `]` (shift 1 beat), `H` (Pan mode when zoomed), `+` / `-` (Zoom), `Shift + A` / `Shift + B` (CUE Track A / B), and `?` (or the header keyboard icon button) to open the Mix shortcuts panel.
+- **Smooth preview fade-in and fade-out (`Deck.ts`, `AudioEngine.ts`):** added a gentle fade-in on Track A at preview pre-roll start and a smooth fade-out on Track B at the end of post-roll (`fadeOutAtCtxTime` / `fadeOutSec` on `Deck.playScheduled`) to remove abrupt cuts at preview boundaries.
+- **Smart CUE volume and stacked dual volume control (`cuePlayer.ts`, `usePlayer.tsx`, `PlayerBar.tsx`):** when CUE shares the same audio output device as normal playback, CUE automatically matches and follows the main volume slider and mute toggle; when CUE uses a separate output device and the transition editor is open, a vertically centered **CUE volume slider** appears stacked right above the main volume slider in `PlayerBar`.
+- **Automatic CUE / preview mutual exclusion on shared output (`usePlayer.tsx`, `MixTransitionPanel.tsx`):** when CUE and normal music use the same audio output, starting CUE pauses the transition preview (or normal playback) and starting/resuming preview or playback stops CUE so they never overlap, while keeping simultaneous playback when using a dedicated CUE output.
+
+### Mix Mode and Playback Bug Fixes
+- **Exact automation curve paths through every node (`WaveformCanvas.tsx`):** replaced fixed 40/44-step uniform sampling with vertex-exact `buildCurvePolylinePoints` for both Canvas 2D drawing and SVG click targets, fixing curve lines cutting corners or detaching from nodes at high zoom (`3.5x`–`4.0x`) and fixing zoomed left/right boundary rendering.
+- **Sample-accurate Track B beat sync after seeking Track A (`Deck.ts`, `AudioEngine.ts`, `usePlayer.tsx`):** fixed Track B occasionally entering slightly early or late when manually seeking near the end of Track A during normal playback by pre-decoding armed Auto-Mix tracks into `AudioBuffer`, upgrading cached Track A from streaming to `AudioBuffer` during seeks (eliminating MP3/M4A VBR seek drift), waiting until `HTMLAudioElement` seeks settle (`isSeeking()`), accounting for post-seek `startDelaySec` (`getRemainingWallSecTo`), and analytically solving exact mid-transition progress `u` (`solveProgressFromConsumedSec`) when seeking onto or past `outPointSecA`.
+- **Eliminated end-of-transition micro-cut when switching to Track B (`Deck.ts`, `AudioEngine.ts`):** stopped disconnecting live main-chain Web Audio nodes (`toneStage`, `midSide`, `pitchShifterNode`) while Track B is playing at full volume, replaced 1-sample parameter resets with smooth `40–60 ms` ramps, and added a `60 ms` micro-fade when clearing outgoing Deck A.
+- **Playlist progression and Autoplay queue fix (`usePlayer.tsx`, `TrackList.tsx`):** fixed an issue where finishing a song inside a playlist could prematurely jump to a random library Autoplay track before the last song of the playlist unless Shuffle was toggled.
+
+---
+
+## [v1.0.1] - Day-One Portable Build Hotfix
+
+*(Note: The `v1.0.0` portable release currently published on GitHub already ships this `v1.0.1` day-one hotfix build; the release tag remained `v1.0.0` by oversight.)*
+
+### Packaged Portable `.exe` Bug Fixes and Visual Polish
+- **V8 bytecode module resolution (`electron/main/libraryBridge.ts`, `electron/main/updater.ts`):** fixed runtime `ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING` errors inside the compiled `out/main/index.cjsc` bytecode by loading `music-metadata` and `electron-updater` safely via `createRequire`.
+- **Native Electron file pickers (`electron/main/index.ts`, `electron/preload/index.ts`, `PlaylistModal.tsx`, `ProfileView.tsx`, `SettingsView.tsx`):** replaced hidden `<input type="file">` pickers blocked in packaged Electron 45 with native `dialog.showOpenDialog` IPC handlers (`pickImageFile`, `pickJsonFile`) for profile avatars, playlist covers, and JSON backup/transition imports.
+- **Native Mini Player and Tray icon fixes (`electron/main/miniPlayerWindow.ts`, `electron/main/desktopIntegration.ts`):** fixed blank/delayed rendering when reopening the frameless native mini player (`backgroundThrottling: false`, `revealWindow` with fallback) and fixed system Tray icon loading inside packaged `.asar` builds (`nativeImage.createFromBuffer`).
+- **Packaged renderer and Lyrics Preview fixes (`App.tsx`, `LyricsView.tsx`):** guarded web-only `/api/app-session/stream` `EventSource` connections in Electron builds and resolved compact/expanded `Lyrics Preview` scroll and blanking glitches.
+
+---
+
 ## [v1.0.0] - Electron Desktop App and Advanced Audio
 
 ### Desktop Architecture, Portable Packaging, and Production Protection

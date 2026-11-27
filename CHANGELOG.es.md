@@ -4,6 +4,76 @@
 
 Registro cronológico de versiones y mejoras implementadas en DeckMix Player, ordenado de la versión más reciente a la más antigua.
 
+## [v1.2.1] - EQ Master Configurable, Balance Estéreo, Bienvenida, Modo Desarrollador y `.m4a` Sin Pérdida
+
+*(Incluye todas las mejoras y correcciones del Modo Mix de la compilación interna `v1.1.1`.)*
+
+### Motor de Audio y Controles del Bus Master
+- **Ecualizador gráfico Master de 5 / 10 / 15 bandas + factor Q configurable (`masterEq.ts`, `AudioEngine.ts`, `SettingsView.tsx`, `usePlayer.tsx`, `backup.ts`):**
+  - Nuevo selector de resolución de bandas del EQ Master entre **5 bandas** (`60 Hz`–`14 kHz`), **10 bandas** (`32 Hz`–`16 kHz`, octavas ISO) y **15 bandas** (`25 Hz`–`16 kHz`, 2/3 de octava ISO), más control deslizante de **factor Q** (`0.5`–`4.0`, defecto `1.0`) aplicado a las bandas `peaking` manteniendo estables los filtros `lowshelf` y `highshelf` en los extremos.
+  - Remuestreo suave en escala logarítmica de frecuencias (`resampleMasterEqBands`) al alternar en vivo entre 5 / 10 / 15 bandas y migración automática de perfiles previos de 6 bandas guardados en `UserPreferences` o respaldos JSON sin romper configuraciones existentes.
+  - Se mantiene el **bypass real** en el grafo Web Audio: los `BiquadFilterNode` se reconstruyen dinámicamente al cambiar la cantidad de bandas y se desconectan completamente de la cadena Master cuando el EQ está desactivado o en `0 dB`.
+- **Balance estéreo Izquierda / Derecha (L/R) con bypass real (`AudioEngine.ts`, `SettingsView.tsx`, `db.ts`, `backup.ts`, `usePlayer.tsx`):**
+  - Nuevo control deslizante de **balance L/R** (`-100%` Izquierda a `+100%` Derecha, con botón rápido **Centrar** y doble clic en el slider para volver a `0`) junto al modo Mono en `Configuración -> Audio y reproducción`.
+  - Implementado mediante un `StereoPannerNode` conectado bajo demanda entre `masterGain` y `limiter`, con bypass directo real en `0%` y persistencia en `UserPreferences` y respaldos JSON.
+
+### Asistente de Bienvenida y Modo Desarrollador Público
+- **Asistente de bienvenida / Onboarding (`OnboardingModal.tsx`, `App.tsx`, `SettingsView.tsx`, `usePlayer.tsx`, `db.ts`):**
+  - Nuevo flujo oscuro de 4 pasos que aparece únicamente en el primer inicio (`onboardingCompleted` en `UserPreferences`, con botón **Omitir** siempre visible): (1) Idioma (`Español` / `English`), (2) Vinculación de la primera carpeta de música (selector nativo en Electron o selector web en `localhost`), (3) Preferencias rápidas (Auto-Gain LUFS, Autoplay y opciones de escritorio si corre en Electron) y (4) Resumen breve de Modo Mix y atajos clave.
+  - Autodetección para perfiles existentes que actualizan desde versiones anteriores (si ya tienen carpetas vinculadas o canciones en biblioteca, se marca completado automáticamente sin interrumpirlos), manteniendo siempre el botón **"Volver a ver la bienvenida"** en `Configuración -> Acerca de DeckMix`.
+- **Modo desarrollador público con pop-ups de error detallados (`devErrorBus.ts`, `DevErrorToasts.tsx`, `SettingsView.tsx`, `App.tsx`, `usePlayer.tsx`, `AudioEngine.ts`, `lrclibClient.ts`, `midiController.ts`):**
+  - Nuevo toggle **"Modo desarrollador"** en `Configuración` (desactivado por defecto para el usuario común) persistido en preferencias y respaldos JSON.
+  - Al activarlo, muestra toasts no bloqueantes (máximo 4 visibles, con deduplicación breve de 6 s y contador `xN`) ante errores reales capturados en audio/decodificación, IPC de Electron, FFmpeg, LRCLIB, Discord RPC, Web MIDI, watcher de carpetas, control remoto Wi-Fi y errores de ejecución, con detalle técnico desplegable y copiado rápido al portapapeles sin cortar la reproducción.
+
+### Soporte Automático `.m4a` Sin Pérdida (FLAC / ALAC) en Electron
+- **Desempaquetado / conversión automática sin pérdida para `.m4a` con FLAC o ALAC (`electron/main/libraryBridge.ts`, `electron/main/mediaTools.ts`, `electron/main/index.ts`, `electron/preload/index.ts`, `vite-env.d.ts`, `AudioEngine.ts`):**
+  - Cuando una pista `.m4a` falla en `<audio>` o `decodeAudioData`, Electron detecta el códec real con `music-metadata` (y sonda de respaldo `ffmpeg -i`) y desempaqueta FLAC sin recodificar (`-c:a copy`) o convierte ALAC sin pérdida a FLAC (`-c:a flac`) con escritura atómica hacia una caché local LRU acotada (`512 MB`) en `userData/cache/m4a-flac/`.
+  - Se sirve de forma transparente mediante `deckmix://local/m4a-cache?key=...` compartiendo los mismos headers CORS (`Access-Control-Allow-Origin: *`, `Access-Control-Expose-Headers`) y soporte `HTTP Range` (`206 Partial Content`) que `deckmix://local/file`, funcionando tanto con `loadStream()` como con `decodeTrackAudio` en Modo Mix.
+  - Incluye deduplicación single-flight por pista, cierre automático de procesos FFmpeg hijos en `before-quit` y degradación limpia con aviso claro en modo web (`localhost`) o si falta FFmpeg.
+
+### Internacionalización y Buscador de Configuración
+- **Paridad total ES/EN y palabras clave actualizadas (`src/i18n/locales/en/`, `src/i18n/locales/es/`, `SettingsView.tsx`):** traducciones 1:1 en español e inglés para bandas/factor Q del EQ, Balance L/R, Modo desarrollador, Asistente de bienvenida y avisos de `.m4a` lossless, junto con palabras clave nuevas (`balance`, `pan`, `factor q`, `5/10/15`, `desarrollador`, `onboarding`, `bienvenida`, `m4a`, `alac`, etc.) en el buscador de `Configuración`.
+
+---
+
+## [v1.1.1] - Actualización del Modo Mix
+
+*(Compilación interna de desarrollo; incluida en `v1.2.1`.)*
+
+### Novedades del Modo Mix
+- **Canvas de ondas despejado y barra de controles inferior dedicada (`WaveformCanvas.tsx`):** se reubicaron los botones de Reproducir/Pausar y Reiniciar la pre-escucha (junto con `RGB`, selector de compases `bars`, Mover cruce, modo Mano y Zoom) fuera del centro de las ondas hacia una barra inferior dedicada debajo del canvas.
+- **Desplazamiento horizontal con zoom y barra minimapa interactiva (`WaveformCanvas.tsx`):** se agregó navegación horizontal cuando el zoom es `> 1.0x` sin mover por accidente Track A ni Track B, mediante una barra horizontal arrastrable debajo de las ondas (con referencia visual de la zona de cruce), botón de modo **Mano** (`H`), arrastre con botón central del mouse o `Alt + arrastrar`, `Shift + rueda` / desplazamiento horizontal del trackpad, zoom con `Ctrl/Alt + rueda` anclado al cursor y clic en el nivel de zoom para volver directo a `1.0x`.
+- **Mover la zona de transición manteniendo las curvas ancladas a la música (`mixMath.ts`, `WaveformCanvas.tsx`, `MixTransitionPanel.tsx`):** nuevo modo **"Mover cruce"** (atajo `W`, más `[` / `]` por compás y `Shift + [` / `]` por beat) que desplaza Track A y Track B juntos manteniendo la sincronía y contradesplaza automáticamente las curvas de Volumen, EQ 3 bandas, Filtro y Efectos (`shiftTransitionCurvesForWindowMove`) para que cada nodo siga clavado en el mismo beat, voz o drop sin tener que rehacer las líneas.
+- **Línea de reproducción CUE en vivo (`WaveformCanvas.tsx`, `MixTransitionPanel.tsx`):** dibuja un cabezal cian `CUE` a 60 fps exclusivamente sobre el carril de Track A o Track B mientras suena la pre-escucha CUE, más un indicador lateral (`<< CUE` / `CUE >>`) cuando la posición queda fuera del área visible por zoom.
+- **Atajos de teclado del Modo Mix y panel de atajos en la interfaz (`MixTransitionPanel.tsx`, `useKeyboardShortcuts.ts`, `SettingsView.tsx`, `usePlayer.tsx`):** atajos activos automáticamente mientras el editor **Editar transición** está abierto:
+  - `1`–`6`: seleccionar y enfocar la curva editable sobre las ondas (`Volumen`, `EQ Bajos`, `EQ Medios`, `EQ Agudos`, `Filtro`, `Efectos`).
+  - `Espacio` (1 tap): reproducir o pausar la pre-escucha de la transición.
+  - **Doble tap rápido en `Espacio`** (`<= 340 ms`): reinicia la pre-escucha desde el inicio (pre-roll), configurable a **`Tecla R`**, **`Retroceso (Backspace)`** o **`Tecla 0`** tanto desde `Configuración -> Atajos de teclado` como desde el propio panel de atajos del Modo Mix.
+  - `W` (modo Mover cruce), `[` / `]` (mover 1 compás), `Shift + [` / `]` (mover 1 beat), `H` (modo Mano con zoom), `+` / `-` (Zoom), `Shift + A` / `Shift + B` (CUE Track A / B) y `?` (o el botón de teclado en la cabecera) para abrir el cuadro de atajos del Modo Mix.
+- **Fade-in y fade-out suaves en la pre-escucha (`Deck.ts`, `AudioEngine.ts`):** se incorporó un fade-in suave al inicio de Track A en pre-roll y un fade-out suave al final del post-roll de Track B (`fadeOutAtCtxTime` / `fadeOutSec` en `Deck.playScheduled`) para eliminar cortes abruptos al iniciar o finalizar la pre-escucha.
+- **Volumen CUE inteligente y doble nivelador apilado (`cuePlayer.ts`, `usePlayer.tsx`, `PlayerBar.tsx`):** si CUE usa la misma salida de audio que la música normal, hereda y sigue automáticamente el volumen y silencio del reproductor principal; si CUE usa un dispositivo de salida distinto y el editor de transición está abierto, aparece un **2do control de volumen `CUE`** apilado arriba del normal y centrado verticalmente en `PlayerBar`.
+- **Exclusión mutua entre CUE y pre-escucha en salida compartida (`usePlayer.tsx`, `MixTransitionPanel.tsx`):** cuando CUE y la música normal comparten dispositivo de salida, activar CUE pausa automáticamente la pre-escucha (o la reproducción normal) y reproducir/reanudar la pre-escucha o música detiene CUE para que nunca se superpongan (manteniendo reproducción simultánea cuando CUE usa una salida independiente).
+
+### Correcciones de Errores del Modo Mix y Reproducción
+- **Trazado exacto de curvas sobre todos los nodos (`WaveformCanvas.tsx`):** se reemplazó el muestreo uniforme de 40/44 pasos por `buildCurvePolylinePoints` pasando por las coordenadas exactas de cada nodo tanto en el dibujo Canvas 2D como en el área interactiva SVG, corrigiendo líneas que recortaban esquinas o se separaban de los puntos con zoom (`3.5x`–`4.0x`) y artefactos en bordes con zoom activo.
+- **Sincronización exacta de Track B tras adelantar/retrasar Track A (`Deck.ts`, `AudioEngine.ts`, `usePlayer.tsx`):** se corrigió el desfase ocasional (entrada un toque temprana o tardía de Track B) al adelantar manualmente Track A cerca del final durante reproducción normal: ahora se pre-decodifican Track A y Track B a `AudioBuffer` al armar Auto-Mix, se promueve Track A en caché a `AudioBuffer` durante el `seek` (eliminando el drift de seek VBR en MP3/M4A), se espera a que termine el `seek` de `HTMLAudioElement` (`isSeeking()`), se contempla el `startDelaySec` (`getRemainingWallSecTo`) y se calcula analíticamente el progreso exacto `u` (`solveProgressFromConsumedSec`) al adelantar sobre o después de `outPointSecA`.
+- **Eliminación del microcorte al finalizar la transición y pasar a Track B (`Deck.ts`, `AudioEngine.ts`):** se dejó de desconectar nodos de la cadena principal en vivo (`toneStage`, `midSide`, `pitchShifterNode`) mientras Track B ya suena a volumen completo, se reemplazaron resets instantáneos de 1 muestra por rampas suaves de `40–60 ms` y se agregó un micro-fade de `60 ms` al limpiar el Deck A saliente.
+- **Corrección de cola y Autoplay en playlists (`usePlayer.tsx`, `TrackList.tsx`):** se corrigió un error donde al terminar una canción dentro de una playlist podía saltar a una canción aleatoria de la biblioteca antes de llegar al último tema salvo que se activara y desactivara el modo aleatorio.
+
+---
+
+## [v1.0.1] - Parche Día Uno de la Compilación Portable
+
+*(Nota: La versión `v1.0.0` publicada en GitHub ya corresponde a esta compilación con el parche `v1.0.1` incluido; al subirla se mantuvo el tag `v1.0.0`.)*
+
+### Correcciones Funcionales y Visuales del Primer `.exe` Portable
+- **Carga de módulos en bytecode V8 (`electron/main/libraryBridge.ts`, `electron/main/updater.ts`):** corrección de fallos `ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING` dentro de `out/main/index.cjsc` cargando `music-metadata` y `electron-updater` de forma segura mediante `createRequire`.
+- **Selectores nativos de archivos en Electron empaquetado (`electron/main/index.ts`, `electron/preload/index.ts`, `PlaylistModal.tsx`, `ProfileView.tsx`, `SettingsView.tsx`):** reemplazo de `<input type="file">` ocultos bloqueados en Electron 45 empaquetado por diálogos nativos `dialog.showOpenDialog` vía IPC (`pickImageFile`, `pickJsonFile`) para fotos de perfil, portadas de playlists e importación JSON.
+- **Mini reproductor nativo e icono de bandeja (`electron/main/miniPlayerWindow.ts`, `electron/main/desktopIntegration.ts`):** corrección de pantalla en blanco o demora al reabrir el mini reproductor nativo (`backgroundThrottling: false`, `revealWindow` con fallback) y carga confiable del icono `Tray` dentro de `app.asar` (`nativeImage.createFromBuffer`).
+- **Ajustes de renderer empaquetado y Muestra de la letra (`App.tsx`, `LyricsView.tsx`):** protección de `EventSource` de `/api/app-session/stream` en modo Electron y corrección de glitches de scroll y vaciado al alternar la vista compacta/expandida en `Muestra de la letra`.
+
+---
+
 ## [v1.0.0] - Aplicación de Escritorio Electron y Audio Avanzado
 
 ### Arquitectura Desktop, Empaquetado Portable y Protección de Producción
